@@ -1,0 +1,31 @@
+services:
+  product-db:
+    image: mysql
+    container_name: product-db
+    environment:
+      MYSQL_DATABASE: product-db
+      MYSQL_USER: swati
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - product-db-data:/var/lib/mysql
+    networks:
+      - myNetwork
+
+  product-service:
+    image: swati22rs/product-service
+    container_name: product-service
+    ports:
+      - "8080:8080"
+    networks:
+      - myNetwork
+    depends_on:
+      - product-db
+
+volumes:
+  product-db-data:
+
+networks:
+  myNetwork:
