@@ -13,16 +13,26 @@ services:
       - product-db-data:/var/lib/mysql
     networks:
       - myNetwork
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "swati", "-ppassword" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   product-service:
-    image: swati22rs/product-service
+    build: .
     container_name: product-service
     ports:
       - "8080:8080"
     networks:
       - myNetwork
     depends_on:
-      - product-db
+      product-db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://product-db:3306/product-db?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: swati
+      SPRING_DATASOURCE_PASSWORD: password
 
 volumes:
   product-db-data:
